@@ -1,7 +1,24 @@
-const request = require('request')
-const url = 'https://api.darksky.net/forecast/db960adf7f455d5f039aadc16b699b6e/37.8267,-122.4233'
+const geocode = require('./utils/geocode')
+const forecast = require('./utils/forecast')
 
-request({ url: url }, (error, response) => {
-    const data = JSON.parse(response.body)
-    console.log(data.currently)
-})
+const address = process.argv[2]
+
+if (!address) {
+    console.log('Please provide an address')
+} else {
+    geocode(address, (error, geocodeData) => {
+        if (error){
+            return console.log(error)
+        }
+    
+        forecast(geocodeData.latitude, geocodeData.longitude, (error, forecastData) => {
+            if (error) {
+                return console.log(error)
+            }
+    
+            console.log(geocodeData.location)
+            console.log(forecastData)
+        })
+    })
+}
+
